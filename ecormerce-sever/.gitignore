@@ -1,1 +1,4 @@
-node_mmodules/
+/node_modules
+/config
+/models
+.env*
