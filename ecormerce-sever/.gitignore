@@ -1,6 +1,6 @@
-node_modules/
+# dependencies
+/node_modules
 
-
-config/
-models/
+/config/
+/models/
 .env*
