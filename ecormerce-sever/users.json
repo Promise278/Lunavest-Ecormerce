@@ -1,0 +1,9 @@
+[
+  {
+    "id": 1,
+    "name": "promise",
+    "email": "promise@gmail.com",
+    "password": "$2b$10$WRarpBPqkCiTcNITxZf5yuGuheP8Sq2jGclNyApFb2GEb5xIDxSXS",
+    "role": "customers"
+  }
+]
