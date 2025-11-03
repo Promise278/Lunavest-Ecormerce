@@ -1,7 +1,6 @@
-/ecormerce-sever/node_modules/
-/ecormerce-frontend/node_modules/
+node_modules/
 
 
-/config/
-/models/
+config/
+models/
 .env*
