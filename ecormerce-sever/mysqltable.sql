@@ -1,5 +1,5 @@
-CREATE TABLE users (
-  id INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE Users (
+  id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
   name VARCHAR(100),
   email VARCHAR(100) UNIQUE,
   password VARCHAR(255),
@@ -15,11 +15,12 @@ CREATE TABLE categories (
 );
 
 CREATE TABLE products (
-  id INT AUTO_INCREMENT PRIMARY KEY,
+  id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
   name VARCHAR(150),
   description TEXT,
   price DECIMAL(10,2),
   stock INT DEFAULT 0,
+  status ENUM("sold", "available") DEFAULT 'available',
   image_url VARCHAR(255),
   category_id INT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -32,7 +33,7 @@ CREATE TABLE orders (
   total_amount DECIMAL(10,2),
   status ENUM('pending', 'paid', 'shipped', 'delivered') DEFAULT 'pending',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES users(id)
+  FOREIGN KEY (User_id) REFERENCES Users(id)
 );
 
 CREATE TABLE order_items (

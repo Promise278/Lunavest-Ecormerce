@@ -1,6 +1,6 @@
 const { Sequelize } = require('sequelize')
 
-const connection = new Sequelize('ecommerce_db', 'promise', 'promotex', {
+const connection = new Sequelize('orm_practice', 'promise', 'promotex', {
     host: "localhost",
     dialect: "mysql"
 });

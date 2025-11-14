@@ -161,12 +161,12 @@ export default function ProductCard() {
 
   return (
     <div className="min-h-screen py-1">
-      <div className="ml-38 mb-12">
+      <div className="md:ml-38 ml-2 mb-12">
         <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-10 text-center">
           Featured Products
         </h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 w-[1500px]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:w-[1500px] w-96">
           {products.map((product) => {
             const isLiked = liked.includes(product.id);
             return (

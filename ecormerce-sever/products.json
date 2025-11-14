@@ -1,7 +1,7 @@
 [
   {
     "id": 1,
-    "title": "MacBook Air M3",
+    "name": "MacBook Air M3",
     "description": "Apple 13-inch laptop with M3 chip, 16GB RAM, and 512GB SSD storage.",
     "status": "available",
     "price": 1899,
@@ -9,7 +9,7 @@
   },
   {
     "id": 2,
-    "title": "Dell XPS 13",
+    "name": "Dell XPS 13",
     "description": "13-inch ultrabook laptop with Intel Core i7, 16GB RAM, and 1TB SSD.",
     "status": "available",
     "price": 1499,
@@ -17,7 +17,7 @@
   },
   {
     "id": 3,
-    "title": "Samsung Galaxy S24 Ultra",
+    "name": "Samsung Galaxy S24 Ultra",
     "description": "Flagship Android smartphone with 200MP camera, Snapdragon 8 Gen 3, and S Pen.",
     "status": "available",
     "price": 1250,
@@ -25,7 +25,7 @@
   },
   {
     "id": 4,
-    "title": "MacBook Air M3",
+    "name": "MacBook Air M3",
     "description": "Apple 13-inch laptop with M3 chip, 16GB RAM, and 512GB SSD storage.",
     "status": "available",
     "price": 1899,
@@ -33,7 +33,7 @@
   },
   {
     "id": 5,
-    "title": "Nike Air Max 270",
+    "name": "Nike Air Max 270",
     "description": "Lightweight running sneakers with air-cushioned soles for all-day comfort.",
     "status": "available",
     "price": 220,
@@ -41,7 +41,7 @@
   },
   {
     "id": 6,
-    "title": "Rolex Submariner",
+    "name": "Rolex Submariner",
     "description": "Luxury stainless steel automatic watch with black dial and ceramic bezel.",
     "status": "limited",
     "price": 9500,
@@ -49,7 +49,7 @@
   },
   {
     "id": 7,
-    "title": "PlayStation 5 Slim",
+    "name": "PlayStation 5 Slim",
     "description": "Sony next-gen console with 1TB SSD and wireless DualSense controller.",
     "status": "available",
     "price": 699,
@@ -57,7 +57,7 @@
   },
   {
     "id": 8,
-    "title": "iPhone 15 Pro Max",
+    "name": "iPhone 15 Pro Max",
     "description": "Latest Apple smartphone with A17 Pro chip, 256GB storage, and improved camera.",
     "status": "available",
     "price": 1399,

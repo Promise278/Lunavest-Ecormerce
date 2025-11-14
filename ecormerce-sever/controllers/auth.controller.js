@@ -1,23 +1,13 @@
-const fs = require("fs");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const sequelize = require('../config/connection')
+const { v4: uuidv4 } = require("uuid");
+const User = require('../models/User')
+require("dotenv").config();
 
-const USERS_FILE = "users.json";
-const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_SECRET = process.env.JWT_SECRET || "promiseobi89";
 
-function loadUsers() {
-  if (!fs.existsSync(USERS_FILE)) {
-    return [];
-  }
-  const data = fs.readFileSync(USERS_FILE, "utf8");
-  return JSON.parse(data || "[]");
-}
-
-function saveUsers(users) {
-  fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
-}
-
-function register(req, res) {
+async function register(req, res) {
   const { name, email, password, role } = req.body;
 
   if (!name || !email || !password) {
@@ -35,28 +25,26 @@ function register(req, res) {
     });
   }
 
-  if (users.find((u) => u.email === email)) {
-    return res.status(400).json({
-      success: false,
-      message: "Email already registered",
-    });
-  }
-
-  let users = loadUsers();
-
   const saltRounds = 10;
   const hashedPassword = bcrypt.hashSync(password, saltRounds);
 
+  const existingUser = await User.findOne({ where: { email } });
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: "Email already registered",
+      });
+    }
+
   const newUser = {
-    id: users.length + 1,
+    id: uuidv4(),
     name,
     email,
     password: hashedPassword,
     role: role || "user",
   };
 
-  users.push(newUser);
-  saveUsers(users);
+  await User.create(newUser)
 
   return res.status(201).json({
     success: true,
@@ -65,7 +53,7 @@ function register(req, res) {
   });
 }
 
-function login(req, res) {
+async function login(req, res) {
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -75,8 +63,10 @@ function login(req, res) {
     });
   }
 
-  let users = loadUsers();
-  const user = users.find((u) => u.email === email);
+  const user = await User.findOne({ 
+    where: { email },
+    attributes: ["id", "name", "email"]
+  })
   if (!user) {
     return res.status(401).json({
       success: false,
@@ -84,13 +74,7 @@ function login(req, res) {
     });
   }
 
-  const isPasswordValid = bcrypt.compareSync(password, user.password);
-  if (!isPasswordValid) {
-    return res.status(401).json({
-      success: false,
-      message: "Invalid email or password",
-    });
-  }
+  await user.update({ lastLogin: new Date() });
 
   const payload = {
     id: user.id,
