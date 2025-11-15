@@ -2,7 +2,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const sequelize = require("../config/connection");
 const { v4: uuidv4 } = require("uuid");
-const User = require("../models");
+const{ Users } = require("../models");
 require("dotenv").config();
 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -29,7 +29,7 @@ async function register(req, res) {
     const saltRounds = 10;
     const hashedPassword = bcrypt.hashSync(password, saltRounds);
 
-    const existingUser = await User.findOne({ where: { email } });
+    const existingUser = await Users.findOne({ where: { email } });
     if (existingUser) {
       return res.status(400).json({
         success: false,
@@ -45,7 +45,7 @@ async function register(req, res) {
       role: role || "user",
     };
 
-    await User.create(newUser);
+    await Users.create(newUser);
 
     return res.status(201).json({
       success: true,
@@ -74,7 +74,7 @@ async function login(req, res) {
       });
     }
 
-    const user = await User.findOne({
+    const user = await Users.findOne({
       where: { email },
       attributes: ["id", "name", "email"],
     });

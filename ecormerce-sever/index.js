@@ -4,8 +4,6 @@ const app = express();
 const authRoutes = require("./routes/auth.route")
 const tickRouthes =require("./routes/products.routes");
 const connection = require('./config/connection');
-const Products = require('./models/Products');
-const User = require('./models/User');
 
 app.use(express.json())
 
@@ -19,8 +17,6 @@ app.use('/auth', authRoutes)
 app.use('/products', tickRouthes)
 
 connection.sync().then(async() => {
-    await User.sync();
-    await Products.sync();
     app.listen(PORT, () => {
         console.log(`Database Connected Successfully and Server running on port ${PORT}`)
     })

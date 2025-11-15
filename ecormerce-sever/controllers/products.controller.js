@@ -1,6 +1,6 @@
 const sequelize = require("../config/connection");
-const Products = require("../models/Products");
-const User = require("../models/User")
+// const Products = require("../models/Products");
+const { User } = require("../models")
 
 async function generate_products(req, res) {
   try {
