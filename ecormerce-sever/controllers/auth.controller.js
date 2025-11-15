@@ -2,7 +2,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const sequelize = require("../config/connection");
 const { v4: uuidv4 } = require("uuid");
-const User = require("../models/User");
+const User = require("../models");
 require("dotenv").config();
 
 const JWT_SECRET = process.env.JWT_SECRET;
