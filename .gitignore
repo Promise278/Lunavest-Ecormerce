@@ -1,0 +1,24 @@
+# Node general
+node_modules/
+npm-debug.log
+yarn-error.log
+pnpm-debug.log
+
+# Next.js / React
+.next/
+out/
+dist/
+build/
+
+# Backend
+uploads/
+logs/
+tmp/
+
+# Environment
+.env
+.env.* 
+
+# OS/system files
+.DS_Store
+Thumbs.db

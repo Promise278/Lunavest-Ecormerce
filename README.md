@@ -1,6 +1,6 @@
 # 🛍️ Lunavest — E-commerce Web Application
 
-**Lunavest** is a modern full-stack **e-commerce platform** built with **Node.js**, **Express**, and **React**.  
+**Lunavest** is a modern full-stack **e-commerce platform** built with **Node.js**, **Express**, and **Nextjs**.  
 It allows users to browse products, manage carts, make orders, and perform secure user authentication.  
 The backend provides a robust REST API, while the frontend delivers a smooth shopping experience.
 
