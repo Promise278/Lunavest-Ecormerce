@@ -1,12 +1,12 @@
 const sequelize = require("../config/connection");
-// const Products = require("../models/Products");
-const { User } = require("../models")
+const { Products } = require("../models");
+// const { Users } = require("../models");
 
 async function generate_products(req, res) {
   try {
     const { name, description, price, status, stock } = req.body;
 
-    if (!name || !description || !price || !status ||!stock === undefined) {
+    if (!name || !description || !price || !status || !stock === undefined) {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
@@ -20,7 +20,7 @@ async function generate_products(req, res) {
       status,
       stock,
       date: new Date(),
-      userId: req.user.id
+      userId: req.user.id,
     };
 
     const product = await Products.create(newProduct);
@@ -44,14 +44,14 @@ async function seeAllProducts(req, res) {
   try {
     const products = await Products.findAll({
       attributes: [
-        'id',
-        'name',
-        'description',
-        'price',
-        'stock',
-        'status',
-        'userId'
-      ]
+        "id",
+        "name",
+        "description",
+        "price",
+        "stock",
+        "status",
+        "userId",
+      ],
     });
 
     if (products.length === 0) {
