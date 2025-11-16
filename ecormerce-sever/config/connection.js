@@ -7,9 +7,9 @@
 
 // module.exports = connection;
 
-require('dotenv').config();
+require("dotenv").config();
 
-const { Sequelize } = require('sequelize');
+const { Sequelize } = require("sequelize");
 
 const connection = new Sequelize(
   process.env.database,
