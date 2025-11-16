@@ -18,6 +18,12 @@ const connection = new Sequelize(
   {
     host: process.env.host,
     dialect: "mysql",
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false,
+      },
+    },
   }
 );
 
