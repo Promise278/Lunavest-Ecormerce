@@ -16,10 +16,10 @@ app.get('/',(req, res) => {
 app.use('/auth', authRoutes)
 app.use('/products', tickRouthes)
 
-connection.sync().then(async() => {
+connection.sync({ force: false, alter: false }).then(async() => {
     app.listen(PORT, () => {
         console.log(`Database Connected Successfully and Server running on port ${PORT}`)
     })
 }).catch((e) => {
-    console.log(e)
+    console.log(`Database connection failed ${e}`)
 });
