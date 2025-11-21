@@ -1,11 +1,13 @@
 const express = require('express')
 const PORT = 5000;
 const app = express();
+const cors = require('cors')
 const authRoutes = require("./routes/auth.route")
 const tickRouthes =require("./routes/products.routes");
 const connection = require('./config/connection');
 
 app.use(express.json())
+app.use(cors());
 
 app.get('/',(req, res) => {
     console.log("Welcome to the page")

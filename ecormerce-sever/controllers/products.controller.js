@@ -13,6 +13,15 @@ async function generate_products(req, res) {
       });
     }
 
+    if (!req.file || !req.file.path) {
+      return res.status(400).json({
+        success: false,
+        message: "Product image is required",
+      });
+    }
+
+    const imageUrl = `/uploads/${req.file}`;
+
     const newProduct = {
       name,
       description,
@@ -20,7 +29,8 @@ async function generate_products(req, res) {
       status,
       stock,
       date: new Date(),
-      userId: req.user.id,
+      UserId: req.user.id,
+      image: imageUrl,
     };
 
     const product = await Products.create(newProduct);
@@ -51,6 +61,7 @@ async function seeAllProducts(req, res) {
         "stock",
         "status",
         "userId",
+        "image"
       ],
     });
 

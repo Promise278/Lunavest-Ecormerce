@@ -76,7 +76,7 @@ async function login(req, res) {
 
     const user = await Users.findOne({
       where: { email },
-      attributes: ["id", "name", "email"],
+      attributes: ["id", "name", "email", "password"],
     });
     if (!user) {
       return res.status(401).json({
@@ -85,16 +85,16 @@ async function login(req, res) {
       });
     }
 
-    // await user.update({ lastLogin: new Date() });
     const payload = {
       id: user.id,
       name: user.name,
       email: user.email,
+      password: user.password,
       role: user.role,
       time: Date.now(),
     };
 
-    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "12h" });
+    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "8h" });
 
     return res.status(200).json({
       success: true,

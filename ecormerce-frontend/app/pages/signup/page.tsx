@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
+import { toast } from "react-toastify";
 
 export default function SignupPage() {
   const [formData, setFormData] = useState({
@@ -14,14 +15,62 @@ export default function SignupPage() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(formData);
+
+    if (
+      !formData.name ||
+      !formData.email ||
+      !formData.password ||
+      !formData.confirmPassword
+    ) {
+      toast.error("All fields are required");
+      return;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      toast.error("Password does not match");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const res = await fetch(
+        `https://lunavest-ecormerce.onrender.com/auth/register`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: formData.name,
+            email: formData.email,
+            password: formData.password,
+          }),
+        }
+      );
+
+      const data = await res.json();
+      console.log("Server response:", data);
+
+      if (!res.ok) throw new Error(data.message || "Registration failed");
+
+      toast.success("User registered successfully!");
+      setFormData({ name: "", email: "", password: "", confirmPassword: "" }); // reset form
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("An unknown error occurred");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -39,7 +88,7 @@ export default function SignupPage() {
             placeholder="Full Name"
             value={formData.name}
             onChange={handleChange}
-            required
+            // required
             className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
           />
 
@@ -50,7 +99,7 @@ export default function SignupPage() {
             placeholder="Email Address"
             value={formData.email}
             onChange={handleChange}
-            required
+            // required
             className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
           />
 
@@ -62,7 +111,7 @@ export default function SignupPage() {
               placeholder="Password"
               value={formData.password}
               onChange={handleChange}
-              required
+              // required
               className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 w-full pr-10"
             />
             <button
@@ -82,7 +131,7 @@ export default function SignupPage() {
               placeholder="Confirm Password"
               value={formData.confirmPassword}
               onChange={handleChange}
-              required
+              // required
               className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 w-full pr-10"
             />
             <button
@@ -97,15 +146,21 @@ export default function SignupPage() {
           {/* Submit Button */}
           <button
             type="submit"
-            className="bg-gray-700 text-white py-3 rounded-lg hover:bg-gray-900 transition duration-300"
+            disabled={loading}
+            className={`bg-gray-700 text-white py-3 rounded-lg hover:bg-gray-900 transition duration-300 ${
+              loading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
           >
-            Sign Up
+            {loading ? "Signing Up..." : "Sign Up"}
           </button>
         </form>
 
         <p className="text-sm text-gray-600 text-center mt-4">
           Already have an account?{" "}
-          <Link href="/pages/signin" className="text-gray-700 font-medium hover:underline">
+          <Link
+            href="/pages/signin"
+            className="text-gray-700 font-medium hover:underline"
+          >
             Login
           </Link>
         </p>
