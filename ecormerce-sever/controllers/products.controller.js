@@ -6,21 +6,21 @@ async function generate_products(req, res) {
   try {
     const { name, description, price, status, stock } = req.body;
 
-    if (!name || !description || !price || !status || !stock === undefined) {
+    if (!name || !description || !price || !status || stock === undefined) {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
       });
     }
 
-    if (!req.file || !req.file.path) {
+    if (!req.file || !req.file.filename) {
       return res.status(400).json({
         success: false,
         message: "Product image is required",
       });
     }
 
-    const imageUrl = `/uploads/${req.file}`;
+    const imageUrl = `/uploads/${req.file.filename}`;
 
     const newProduct = {
       name,
