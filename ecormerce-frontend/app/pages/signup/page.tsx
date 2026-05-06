@@ -42,21 +42,18 @@ export default function SignupPage() {
     setLoading(true);
 
     try {
-      const res = await fetch(
-        `https://lunavest-ecormerce.onrender.com/auth/register`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name: formData.name,
-            email: formData.email,
-            password: formData.password,
-          }),
-        }
-      );
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'
+      const res = await fetch(`${API_URL}/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
 
       const data = await res.json();
-      console.log("Server response:", data);
 
       if (!res.ok) throw new Error(data.message || "Registration failed");
 

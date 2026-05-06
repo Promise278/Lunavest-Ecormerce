@@ -1,193 +1,129 @@
 "use client"
-import React, { useState } from "react";
-import Image from "next/image";
-import { Heart, Star } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Heart, Star, ShoppingCart, Loader2 } from "lucide-react";
+import { apiFetch, apiPost } from "@/lib/api";
+import { useCart } from "@/context/CartContext";
+import { toast } from "react-toastify";
+
+interface Product {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  stock: number;
+  status: string;
+  image: string;
+}
 
 export default function ProductCard() {
-  const [liked, setLiked] = useState<number[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [liked, setLiked] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { addToCart } = useCart();
 
-  const handleLike = (id: number) => {
-    setLiked((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-    );
+  useEffect(() => {
+    fetchProducts();
+    fetchLikedProducts();
+  }, []);
+
+  const fetchProducts = async () => {
+    try {
+      const response = await apiFetch("/products/seeAllproducts");
+      if (response.success) {
+        setProducts(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const products = [
-    {
-      id: 1,
-      name: "UrbanEdge Men's Jeans Collection",
-      price: "Rp253.000",
-      oldPrice: "Rp370.000",
-      rating: 4.9,
-      sold: "10k+ Sold",
-      image: "/jeans.jpg",
-    },
-    {
-      id: 2,
-      name: "StreetFlex Denim Pro",
-      price: "Rp299.000",
-      oldPrice: "Rp420.000",
-      rating: 4.8,
-      sold: "8k+ Sold",
-      image: "/cap.jpg",
-    },
-    {
-      id: 3,
-      name: "Classic Fit Jeans",
-      price: "Rp215.000",
-      oldPrice: "Rp330.000",
-      rating: 4.7,
-      sold: "12k+ Sold",
-      image: "/classic-watches-interface.png",
-    },
-    {
-      id: 4,
-      name: "RuggedWear Slim Tapered",
-      price: "Rp279.000",
-      oldPrice: "Rp390.000",
-      rating: 4.9,
-      sold: "6k+ Sold",
-      image: "/clothing-rack-with-floral-hawaiian-shirts-hangers-hat.jpg",
-    },
-    {
-    id: 5,
-    name: "BlueStone Men's Stretch Jeans",
-    price: "Rp240.000",
-    oldPrice: "Rp360.000",
-    rating: 4.8,
-    sold: "7k+ Sold",
-    image: "/jacket.jpg",
-  },
-  {
-    id: 6,
-    name: "DenimCore Everyday Jeans",
-    price: "Rp225.000",
-    oldPrice: "Rp310.000",
-    rating: 4.7,
-    sold: "9k+ Sold",
-    image: "/men-clothes-set-removebg-preview.png",
-  },
-  {
-    id: 7,
-    name: "UrbanFlex Comfort Fit",
-    price: "Rp250.000",
-    oldPrice: "Rp370.000",
-    rating: 4.9,
-    sold: "11k+ Sold",
-    image: "/one-black-sneaker-shoe-isolated-white-removebg-preview.png",
-  },
-  {
-    id: 8,
-    name: "Prime Denim Essentials",
-    price: "Rp260.000",
-    oldPrice: "Rp380.000",
-    rating: 4.8,
-    sold: "10k+ Sold",
-    image: "/overhead-view-womans-casual-outfits-removebg-preview.png",
-  },
-  {
-    id: 9,
-    name: "DarkWash Premium Jeans",
-    price: "Rp280.000",
-    oldPrice: "Rp400.000",
-    rating: 5.0,
-    sold: "15k+ Sold",
-    image: "/short-sleeve-black-t-shirt.jpg",
-  },
-  {
-    id: 10,
-    name: "ToughLine Faded Denim",
-    price: "Rp265.000",
-    oldPrice: "Rp350.000",
-    rating: 4.8,
-    sold: "8k+ Sold",
-    image: "/white-expensive-woman-color-hand-removebg-preview.png",
-  },
-  {
-    id: 11,
-    name: "DenimWorks Relax Fit",
-    price: "Rp245.000",
-    oldPrice: "Rp310.000",
-    rating: 4.7,
-    sold: "5k+ Sold",
-    image: "/third_bg.png",
-  },
-  {
-    id: 12,
-    name: "NightRider Black Denim",
-    price: "Rp295.000",
-    oldPrice: "Rp420.000",
-    rating: 5.0,
-    sold: "14k+ Sold",
-    image: "/cap.jpg",
-  },
-  {
-    id: 13,
-    name: "CasualTone Classic Jeans",
-    price: "Rp230.000",
-    oldPrice: "Rp340.000",
-    rating: 4.6,
-    sold: "4k+ Sold",
-    image: "/jeans.jpg",
-  },
-  {
-    id: 14,
-    name: "EdgeFit Slim Jeans",
-    price: "Rp255.000",
-    oldPrice: "Rp380.000",
-    rating: 4.8,
-    sold: "9k+ Sold",
-    image: "/clothing-rack-with-floral-hawaiian-shirts-hangers-hat.jpg",
-  },
-  {
-    id: 15,
-    name: "VibeWear Distressed Jeans",
-    price: "Rp310.000",
-    oldPrice: "Rp450.000",
-    rating: 4.9,
-    sold: "12k+ Sold",
-    image: "/one-black-sneaker-shoe-isolated-white-removebg-preview.png",
-  },
-  {
-    id: 16,
-    name: "UrbanStyle Modern Denim",
-    price: "Rp270.000",
-    oldPrice: "Rp390.000",
-    rating: 4.8,
-    sold: "10k+ Sold",
-    image: "/casual-men-short-pants.jpg",
-  },
-  ];
+  const fetchLikedProducts = async () => {
+    try {
+      const response = await apiFetch("/products/liked");
+      if (response.success) {
+        setLiked(response.data.map((p: any) => p.id));
+      }
+    } catch (error) {
+      // Might fail if not logged in, ignore
+    }
+  };
+
+  const handleLike = async (id: string) => {
+    try {
+      const response = await apiPost(`/products/like/${id}`, {});
+      if (response.success) {
+        setLiked((prev) =>
+          prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+        );
+        toast.success(response.message);
+      }
+    } catch (error: any) {
+      toast.error(error.message || "Please login to like products");
+    }
+  };
+
+  const handleAddToCart = (product: Product) => {
+    addToCart({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.image,
+    });
+    toast.success(`${product.name} added to cart`);
+  };
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 gap-4">
+        <Loader2 className="w-10 h-10 animate-spin text-indigo-600" />
+        <p className="text-gray-500 font-medium">Loading amazing products...</p>
+      </div>
+    );
+  }
+
+  if (products.length === 0) {
+    return <div className="text-center py-20 text-gray-500">No products found.</div>;
+  }
 
   return (
     <div className="min-h-screen py-1">
-      <div className="md:ml-38 ml-0 mb-12">
+      <div className="max-w-[1400px] mx-auto px-4 mb-12">
         <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-10 text-center">
           Featured Products
         </h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:w-[1500px] w-96">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {products.map((product) => {
             const isLiked = liked.includes(product.id);
+            const imageUrl = product.image.startsWith("http") 
+              ? product.image 
+              : `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}${product.image}`;
+
             return (
               <div
                 key={product.id}
-                className="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 relative"
+                className="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 relative border border-gray-100"
               >
-                <div className="relative aspect-square overflow-hidden">
-                  <Image
-                    src={product.image}
+                <div className="relative aspect-square overflow-hidden bg-gray-50">
+                  <img
+                    src={imageUrl}
                     alt={product.name}
-                    width={400}
-                    height={400}
                     className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = "/placeholder.png";
+                    }}
                   />
-                  <div className="absolute inset-0 bg-linear-to-t from-black/30 via-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
                   {/* Heart Icon */}
                   <button
-                    onClick={() => handleLike(product.id)}
-                    className="absolute top-4 right-4 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md hover:bg-rose-100 hover:scale-110 transition-all duration-300"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleLike(product.id);
+                    }}
+                    className="absolute top-4 right-4 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md hover:bg-rose-50 hover:scale-110 transition-all duration-300 z-10"
                   >
                     <Heart
                       className={`w-5 h-5 transition-colors duration-300 ${
@@ -201,30 +137,39 @@ export default function ProductCard() {
 
                 {/* Product Info */}
                 <div className="p-5">
-                  <h3 className="text-base font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-indigo-600 transition-colors">
+                  <h3 className="text-base font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-indigo-600 transition-colors h-12">
                     {product.name}
                   </h3>
 
-                  {/* Rating & Sold */}
+                  {/* Rating & Stock */}
                   <div className="flex items-center gap-2 text-sm mb-3">
                     <div className="flex items-center">
                       <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
                       <span className="ml-1 font-medium text-gray-800">
-                        {product.rating}
+                        4.5
                       </span>
                     </div>
                     <span className="text-gray-400">•</span>
-                    <span className="text-gray-500">{product.sold}</span>
+                    <span className={`font-medium ${product.stock > 0 ? "text-green-600" : "text-rose-600"}`}>
+                      {product.stock > 0 ? `${product.stock} in stock` : "Out of stock"}
+                    </span>
                   </div>
 
-                  {/* Price */}
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg font-bold text-gray-900">
-                      {product.price}
-                    </span>
-                    <span className="text-sm text-gray-400 line-through">
-                      {product.oldPrice}
-                    </span>
+                  {/* Price & Add to Cart */}
+                  <div className="flex items-center justify-between mt-auto">
+                    <div className="flex flex-col">
+                      <span className="text-lg font-bold text-gray-900">
+                        Rp{product.price.toLocaleString()}
+                      </span>
+                    </div>
+                    <button 
+                      onClick={() => handleAddToCart(product)}
+                      disabled={product.stock <= 0}
+                      className="p-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-all hover:shadow-lg disabled:bg-gray-300 disabled:cursor-not-allowed active:scale-95"
+                      title="Add to Cart"
+                    >
+                      <ShoppingCart className="w-5 h-5" />
+                    </button>
                   </div>
                 </div>
               </div>

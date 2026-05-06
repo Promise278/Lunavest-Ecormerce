@@ -25,21 +25,22 @@ function SignInPage() {
     setLoading(true)
 
     try {
-      const res = await fetch('https://lunavest-ecormerce.onrender.com/auth/login', {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'
+      const res = await fetch(`${API_URL}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       })
 
       const data = await res.json()
-      console.log('Login response:', data)
 
       if (!res.ok) throw new Error(data.message || 'Login failed')
 
       localStorage.setItem('token', data.token)
+      localStorage.setItem('user', JSON.stringify(data.user))
       toast.success('Login successful!')
 
-      // window.location.href = '/'
+      window.location.href = '/'
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message)
