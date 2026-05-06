@@ -76,6 +76,7 @@ export default function Slider() {
                 width={800}
                 height={1650}
                 className="rounded-lg object-contain"
+                priority
               />
             </div>
           </motion.div>
