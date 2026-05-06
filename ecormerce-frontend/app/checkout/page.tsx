@@ -49,7 +49,7 @@ export default function CheckoutPage() {
               <Package className="w-12 h-12 text-gray-300" />
             </div>
             <h2 className="text-2xl font-bold text-gray-900">Your cart is empty</h2>
-            <p className="text-gray-500 mt-2 mb-8">{"Looks like you haven't added anything yet"}.</p>
+            <p className="text-gray-500 mt-2 mb-8">{"Looks like you haven't added anything yet."}</p>
             <button
               onClick={() => router.push("/")}
               className="px-8 py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition-all"
