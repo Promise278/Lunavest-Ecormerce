@@ -13,14 +13,14 @@ async function generate_products(req, res) {
       });
     }
 
-    if (!req.file || !req.file.filename) {
+    if (!req.file || !req.file.path) {
       return res.status(400).json({
         success: false,
         message: "Product image is required",
       });
     }
 
-    const imageUrl = `/uploads/${req.file.filename}`;
+    const imageUrl = req.file.path;
 
     const newProduct = {
       name,
