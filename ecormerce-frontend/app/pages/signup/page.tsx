@@ -4,8 +4,10 @@ import Link from "next/link";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 export default function SignupPage() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -59,7 +61,7 @@ export default function SignupPage() {
 
       toast.success("User registered successfully!");
       setFormData({ name: "", email: "", password: "", confirmPassword: "" });
-      window.location.href = '/pages/signin'
+      router.push('/pages/signin')
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);

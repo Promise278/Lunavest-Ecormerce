@@ -4,11 +4,15 @@ import React, { useState } from 'react'
 import { Eye, EyeOff } from 'lucide-react'
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import { useRouter } from 'next/navigation'
+import { useAuth } from '@/context/AuthContext'
 
 function SignInPage() {
   const [formData, setFormData] = useState({ email: '', password: '' })
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
+  const router = useRouter()
+  const { login } = useAuth()
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
@@ -25,7 +29,7 @@ function SignInPage() {
     setLoading(true)
 
     try {
-      const API_URL = 'https://lunavest-ecormerce.onrender.com'
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://lunavest-ecormerce.onrender.com'
       const res = await fetch(`${API_URL}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -36,11 +40,10 @@ function SignInPage() {
 
       if (!res.ok) throw new Error(data.message || 'Login failed')
 
-      localStorage.setItem('token', data.token)
-      localStorage.setItem('user', JSON.stringify(data.user))
+      login(data.user, data.token)
       toast.success('Login successful!')
 
-      window.location.href = '/'
+      router.push('/')
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message)

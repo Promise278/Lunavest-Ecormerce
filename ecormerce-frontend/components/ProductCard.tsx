@@ -189,7 +189,7 @@ export default function ProductCard() {
                     <button 
                       onClick={() => handleAddToCart(product)}
                       disabled={product.stock <= 0}
-                      className="w-full py-2.5 bg-indigo-600 text-white rounded-lg font-bold text-xs hover:bg-indigo-700 transition-all shadow-md hover:shadow-lg disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed active:scale-95 flex items-center justify-center gap-2 uppercase tracking-wide"
+                      className="w-full py-2 bg-gray-900 text-white rounded-lg font-bold text-xs hover:bg-black transition-all shadow-md hover:shadow-lg disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed active:scale-95 flex items-center justify-center gap-2 uppercase tracking-wide"
                     >
                       <ShoppingCart className="w-4 h-4" />
                       Add to Cart

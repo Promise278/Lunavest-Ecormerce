@@ -3,28 +3,18 @@ import { useState, useEffect } from "react";
 import { Search, Heart, ShoppingCart, PackagePlus } from "lucide-react";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Navbar() {
   const [category, setCategory] = useState("All Category");
   const { totalItems } = useCart();
-  const [user, setUser] = useState<any>(null);
-
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch (e) {
-        console.error("Error parsing user data");
-      }
-    }
-  }, []);
+  const { user, logout } = useAuth();
+  const router = useRouter();
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    setUser(null);
-    window.location.href = "/";
+    logout();
+    router.push("/");
   };
 
   return (

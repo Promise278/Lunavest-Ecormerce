@@ -82,8 +82,9 @@ export default function StockPage() {
       setFormData({ name: "", description: "", price: "", stock: "", status: "available" });
       setImage(null);
       setPreview(null);
-    } catch (error: any) {
-      toast.error(error.message || "Failed to add product");
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : "Failed to add product";
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -93,12 +94,12 @@ export default function StockPage() {
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
         <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
-          <div className="bg-indigo-600 px-8 py-10 text-white text-center">
+          <div className="bg-gray-900 px-8 py-10 text-white text-center">
             <h1 className="text-3xl font-extrabold flex items-center justify-center gap-3">
               <Package className="w-8 h-8" />
               Stock New Product
             </h1>
-            <p className="mt-2 text-indigo-100">Add a new item to your store collection</p>
+            <p className="mt-2 text-gray-400">Add a new item to your store collection</p>
           </div>
 
           <form onSubmit={handleSubmit} className="p-8 space-y-6">
@@ -106,7 +107,7 @@ export default function StockPage() {
               {/* Product Name */}
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                  <List className="w-4 h-4 text-indigo-500" />
+                  <List className="w-4 h-4 text-gray-500" />
                   Product Name
                 </label>
                 <input
@@ -115,7 +116,7 @@ export default function StockPage() {
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all outline-none"
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all outline-none text-gray-900"
                   placeholder="e.g. Classic Denim Jacket"
                 />
               </div>
@@ -123,7 +124,7 @@ export default function StockPage() {
               {/* Price */}
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                  <DollarSign className="w-4 h-4 text-indigo-500" />
+                  <DollarSign className="w-4 h-4 text-gray-500" />
                   Price (Rp)
                 </label>
                 <input
@@ -132,7 +133,7 @@ export default function StockPage() {
                   value={formData.price}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all outline-none"
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all outline-none text-gray-900"
                   placeholder="250000"
                 />
               </div>
@@ -140,7 +141,7 @@ export default function StockPage() {
               {/* Stock */}
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                  <Package className="w-4 h-4 text-indigo-500" />
+                  <Package className="w-4 h-4 text-gray-500" />
                   Initial Stock
                 </label>
                 <input
@@ -149,7 +150,7 @@ export default function StockPage() {
                   value={formData.stock}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all outline-none"
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all outline-none text-gray-900"
                   placeholder="50"
                 />
               </div>
@@ -157,14 +158,14 @@ export default function StockPage() {
               {/* Status */}
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                  <List className="w-4 h-4 text-indigo-500" />
+                  <List className="w-4 h-4 text-gray-500" />
                   Status
                 </label>
                 <select
                   name="status"
                   value={formData.status}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all outline-none appearance-none bg-white"
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all outline-none appearance-none bg-white text-gray-900"
                 >
                   <option value="available">Available</option>
                   <option value="inactive">Inactive</option>
@@ -176,7 +177,7 @@ export default function StockPage() {
             {/* Description */}
             <div className="space-y-2">
               <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                <FileText className="w-4 h-4 text-indigo-500" />
+                <FileText className="w-4 h-4 text-gray-500" />
                 Description
               </label>
               <textarea
@@ -185,7 +186,7 @@ export default function StockPage() {
                 onChange={handleChange}
                 required
                 rows={4}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all outline-none resize-none"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all outline-none resize-none text-gray-900"
                 placeholder="Describe your product..."
               />
             </div>
@@ -193,10 +194,10 @@ export default function StockPage() {
             {/* Image Upload */}
             <div className="space-y-2">
               <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                <Upload className="w-4 h-4 text-indigo-500" />
+                <Upload className="w-4 h-4 text-gray-500" />
                 Product Image
               </label>
-              <div className="relative border-2 border-dashed border-gray-200 rounded-3xl p-8 hover:border-indigo-400 transition-colors group">
+              <div className="relative border-2 border-dashed border-gray-200 rounded-3xl p-8 hover:border-gray-400 transition-colors group bg-gray-50/50">
                 <input
                   type="file"
                   accept="image/*"
@@ -205,13 +206,13 @@ export default function StockPage() {
                 />
                 <div className="flex flex-col items-center gap-4 text-center">
                   {preview ? (
-                    <div className="relative w-48 h-48 rounded-2xl overflow-hidden shadow-lg">
+                    <div className="relative w-48 h-48 rounded-2xl overflow-hidden shadow-lg border border-gray-100">
                       <img src={preview} alt="Preview" className="w-full h-full object-cover" />
                     </div>
                   ) : (
                     <>
-                      <div className="p-4 bg-indigo-50 rounded-full group-hover:bg-indigo-100 transition-colors">
-                        <Upload className="w-10 h-10 text-indigo-500" />
+                      <div className="p-4 bg-gray-100 rounded-full group-hover:bg-gray-200 transition-colors">
+                        <Upload className="w-10 h-10 text-gray-500" />
                       </div>
                       <div>
                         <p className="text-base font-medium text-gray-700">Click to upload image</p>
@@ -226,7 +227,7 @@ export default function StockPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-4 bg-indigo-600 text-white rounded-2xl font-bold text-lg hover:bg-indigo-700 transition-all hover:shadow-xl active:scale-[0.98] disabled:bg-indigo-300 flex items-center justify-center gap-2"
+              className="w-full py-4 bg-gray-900 text-white rounded-2xl font-bold text-lg hover:bg-black transition-all hover:shadow-xl active:scale-[0.98] disabled:bg-gray-400 flex items-center justify-center gap-2"
             >
               {loading ? (
                 <>
