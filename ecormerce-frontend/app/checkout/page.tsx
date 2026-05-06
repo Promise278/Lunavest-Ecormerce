@@ -5,6 +5,7 @@ import { apiPost } from "@/lib/api";
 import { toast } from "react-toastify";
 import { ShoppingBag, Trash2, CreditCard, ArrowRight, Package } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function CheckoutPage() {
   const { cart, totalItems, totalPrice, removeFromCart, clearCart } = useCart();
@@ -26,8 +27,9 @@ export default function CheckoutPage() {
         clearCart();
         router.push("/");
       }
-    } catch (error: any) {
-      toast.error(error.message || "Checkout failed. Please login.");
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : "Checkout failed. Please login.";
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -47,7 +49,7 @@ export default function CheckoutPage() {
               <Package className="w-12 h-12 text-gray-300" />
             </div>
             <h2 className="text-2xl font-bold text-gray-900">Your cart is empty</h2>
-            <p className="text-gray-500 mt-2 mb-8">Looks like you haven't added anything yet.</p>
+            <p className="text-gray-500 mt-2 mb-8">{"Looks like you haven't added anything yet"}.</p>
             <button
               onClick={() => router.push("/")}
               className="px-8 py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition-all"
@@ -64,14 +66,20 @@ export default function CheckoutPage() {
                   key={item.id}
                   className="bg-white rounded-2xl p-4 flex items-center gap-6 shadow-sm border border-gray-100 group"
                 >
-                  <div className="w-24 h-24 bg-gray-50 rounded-xl overflow-hidden flex-shrink-0">
-                    <img
-                      src={item.image.startsWith("http") ? item.image : `http://localhost:5000${item.image}`}
+                  <div className="w-24 h-24 bg-gray-50 rounded-xl overflow-hidden shrink-0 relative">
+                    <Image
+                      src={
+                        item.image.startsWith("http")
+                          ? item.image
+                          : `https://lunavest-ecormerce.onrender.com${item.image}`
+                      }
                       alt={item.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      fill
+                      sizes="96px"
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                   </div>
-                  <div className="flex-grow">
+                  <div className="grow">
                     <h3 className="text-lg font-bold text-gray-900">{item.name}</h3>
                     <p className="text-indigo-600 font-semibold mt-1">
                       Rp{item.price.toLocaleString()} x {item.quantity}

@@ -1,6 +1,7 @@
 "use client"
 import React, { useState, useEffect } from "react";
 import { Heart, Star, ShoppingCart, Loader2 } from "lucide-react";
+import Image from "next/image";
 import { apiFetch, apiPost } from "@/lib/api";
 import { useCart } from "@/context/CartContext";
 import { toast } from "react-toastify";
@@ -28,8 +29,8 @@ export default function ProductCard() {
 
   const fetchProducts = async () => {
     try {
-      const response = await apiFetch("/products/seeAllproducts");
-      if (response.success) {
+      const response = await apiFetch<{ success: boolean; data: Product[] }>("/products/seeAllproducts");
+      if (response.success && response.data) {
         setProducts(response.data);
       }
     } catch (error) {
@@ -41,9 +42,9 @@ export default function ProductCard() {
 
   const fetchLikedProducts = async () => {
     try {
-      const response = await apiFetch("/products/liked");
-      if (response.success) {
-        setLiked(response.data.map((p: any) => p.id));
+      const response = await apiFetch<{ success: boolean; data: Product[] }>("/products/liked");
+      if (response.success && response.data) {
+        setLiked(response.data.map((p: Product) => p.id));
       }
     } catch (error) {
       // Might fail if not logged in, ignore
@@ -59,8 +60,9 @@ export default function ProductCard() {
         );
         toast.success(response.message);
       }
-    } catch (error: any) {
-      toast.error(error.message || "Please login to like products");
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : "Please login to like products";
+      toast.error(errorMessage);
     }
   };
 
@@ -99,7 +101,7 @@ export default function ProductCard() {
             const isLiked = liked.includes(product.id);
             const imageUrl = product.image.startsWith("http") 
               ? product.image 
-              : `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}${product.image}`;
+              : `${"https://lunavest-ecormerce.onrender.com"}${product.image}`;
 
             return (
               <div
@@ -117,13 +119,13 @@ export default function ProductCard() {
                     </span>
                   </div>
 
-                  <img
+                  <Image
                     src={imageUrl}
                     alt={product.name}
-                    className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-700"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = "/placeholder.png";
-                    }}
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    className="object-cover group-hover:scale-110 transition-transform duration-700"
+                    priority={false}
                   />
                   
                   {/* Quick Action Overlay */}

@@ -42,7 +42,7 @@ export default function SignupPage() {
     setLoading(true);
 
     try {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'
+      const API_URL ='https://lunavest-ecormerce.onrender.com'
       const res = await fetch(`${API_URL}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

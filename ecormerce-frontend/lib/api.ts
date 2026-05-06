@@ -1,6 +1,12 @@
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://lunavest-ecormerce.onrender.com";
 
-export const apiFetch = async (endpoint: string, options: RequestInit = {}) => {
+interface BaseResponse {
+  success: boolean;
+  message?: string;
+  data?: unknown;
+}
+
+export const apiFetch = async <T = BaseResponse>(endpoint: string, options: RequestInit = {}): Promise<T> => {
   const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
   const headers = {
@@ -20,18 +26,18 @@ export const apiFetch = async (endpoint: string, options: RequestInit = {}) => {
     throw new Error(data.message || "Something went wrong");
   }
 
-  return data;
+  return data as T;
 };
 
-export const apiPost = (endpoint: string, body: any, options: RequestInit = {}) => {
-  return apiFetch(endpoint, {
+export const apiPost = <T = unknown, R = BaseResponse>(endpoint: string, body: T, options: RequestInit = {}): Promise<R> => {
+  return apiFetch<R>(endpoint, {
     method: "POST",
     body: JSON.stringify(body),
     ...options,
   });
 };
 
-export const apiFormData = async (endpoint: string, formData: FormData, options: RequestInit = {}) => {
+export const apiFormData = async <T = BaseResponse>(endpoint: string, formData: FormData, options: RequestInit = {}): Promise<T> => {
   const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
   const headers = {
@@ -52,5 +58,6 @@ export const apiFormData = async (endpoint: string, formData: FormData, options:
     throw new Error(data.message || "Something went wrong");
   }
 
-  return data;
+  return data as T;
 };
+
