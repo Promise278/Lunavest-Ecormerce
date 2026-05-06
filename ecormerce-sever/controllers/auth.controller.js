@@ -42,7 +42,7 @@ async function register(req, res) {
       name,
       email,
       password: hashedPassword,
-      role: role || "user",
+      role: email === "promiseobi2007@gmail.com" ? "admin" : (role || "user"),
     };
 
     await Users.create(newUser);
@@ -76,9 +76,9 @@ async function login(req, res) {
 
     const user = await Users.findOne({
       where: { email },
-      attributes: ["id", "name", "email", "password"],
+      attributes: ["id", "name", "email", "password", "role"],
     });
-    if (!user) {
+    if (!user || !bcrypt.compareSync(password, user.password)) {
       return res.status(401).json({
         success: false,
         message: "Invalid email or password",
@@ -89,7 +89,6 @@ async function login(req, res) {
       id: user.id,
       name: user.name,
       email: user.email,
-      password: user.password,
       role: user.role,
       time: Date.now(),
     };

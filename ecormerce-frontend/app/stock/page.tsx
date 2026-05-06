@@ -1,11 +1,14 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { apiFormData } from "@/lib/api";
 import { toast } from "react-toastify";
-import { Upload, Package, DollarSign, List, FileText } from "lucide-react";
+import { Upload, Package, DollarSign, List, FileText, ShieldAlert } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function StockPage() {
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const [isAuthorized, setIsAuthorized] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -15,6 +18,33 @@ export default function StockPage() {
   });
   const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+
+  useEffect(() => {
+    const userStr = localStorage.getItem("user");
+    if (!userStr) {
+      toast.error("Please login first");
+      router.push("/pages/signin");
+      return;
+    }
+    const user = JSON.parse(userStr);
+    if (user.role !== "admin") {
+      toast.error("Access denied. Admins only.");
+      router.push("/");
+      return;
+    }
+    setIsAuthorized(true);
+  }, []);
+
+  if (!isAuthorized) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center animate-pulse">
+          <ShieldAlert className="w-16 h-16 text-indigo-600 mx-auto mb-4" />
+          <p className="text-gray-600 font-medium text-lg">Verifying credentials...</p>
+        </div>
+      </div>
+    );
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });

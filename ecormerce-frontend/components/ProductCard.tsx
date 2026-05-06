@@ -104,18 +104,30 @@ export default function ProductCard() {
             return (
               <div
                 key={product.id}
-                className="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 relative border border-gray-100"
+                className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 relative border border-gray-100 flex flex-col h-full"
               >
                 <div className="relative aspect-square overflow-hidden bg-gray-50">
+                  {/* Badges */}
+                  <div className="absolute top-2 left-2 z-10 flex flex-col gap-1">
+                    <span className="bg-indigo-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-sm uppercase tracking-tighter">
+                      Official Store
+                    </span>
+                    <span className="bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-sm uppercase tracking-tighter w-fit">
+                      Express
+                    </span>
+                  </div>
+
                   <img
                     src={imageUrl}
                     alt={product.name}
-                    className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
+                    className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-700"
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = "/placeholder.png";
                     }}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  
+                  {/* Quick Action Overlay */}
+                  <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
                   {/* Heart Icon */}
                   <button
@@ -123,52 +135,62 @@ export default function ProductCard() {
                       e.preventDefault();
                       handleLike(product.id);
                     }}
-                    className="absolute top-4 right-4 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md hover:bg-rose-50 hover:scale-110 transition-all duration-300 z-10"
+                    className="absolute top-2 right-2 w-8 h-8 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-sm hover:bg-rose-50 hover:scale-110 transition-all duration-300 z-10"
                   >
                     <Heart
-                      className={`w-5 h-5 transition-colors duration-300 ${
+                      className={`w-4 h-4 transition-colors duration-300 ${
                         isLiked
                           ? "fill-rose-500 text-rose-500"
-                          : "text-gray-700 group-hover:text-rose-500"
+                          : "text-gray-400 group-hover:text-rose-500"
                       }`}
                     />
                   </button>
                 </div>
 
                 {/* Product Info */}
-                <div className="p-5">
-                  <h3 className="text-base font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-indigo-600 transition-colors h-12">
+                <div className="p-4 flex flex-col flex-grow">
+                  <h3 className="text-sm font-medium text-gray-800 mb-1 line-clamp-2 group-hover:text-indigo-600 transition-colors h-10">
                     {product.name}
                   </h3>
 
-                  {/* Rating & Stock */}
-                  <div className="flex items-center gap-2 text-sm mb-3">
-                    <div className="flex items-center">
-                      <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                      <span className="ml-1 font-medium text-gray-800">
-                        4.5
+                  <div className="mt-auto">
+                    {/* Price */}
+                    <div className="flex flex-col mb-2">
+                      <span className="text-lg font-bold text-gray-900 leading-none">
+                        Rp {product.price.toLocaleString()}
                       </span>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-xs text-gray-400 line-through">
+                          Rp {(product.price * 1.2).toLocaleString()}
+                        </span>
+                        <span className="text-[10px] font-bold text-orange-600 bg-orange-50 px-1 rounded">
+                          -20%
+                        </span>
+                      </div>
                     </div>
-                    <span className="text-gray-400">•</span>
-                    <span className={`font-medium ${product.stock > 0 ? "text-green-600" : "text-rose-600"}`}>
-                      {product.stock > 0 ? `${product.stock} in stock` : "Out of stock"}
-                    </span>
-                  </div>
 
-                  {/* Price & Add to Cart */}
-                  <div className="flex items-center justify-between mt-auto">
-                    <div className="flex flex-col">
-                      <span className="text-lg font-bold text-gray-900">
-                        Rp{product.price.toLocaleString()}
+                    {/* Rating & Stock */}
+                    <div className="flex items-center justify-between text-[11px] mb-4">
+                      <div className="flex items-center gap-1">
+                        <div className="flex items-center">
+                          {[1, 2, 3, 4, 5].map((s) => (
+                            <Star key={s} className={`w-3 h-3 ${s <= 4 ? "text-orange-400 fill-orange-400" : "text-gray-200"}`} />
+                          ))}
+                        </div>
+                        <span className="text-gray-400">(45)</span>
+                      </div>
+                      <span className={`font-bold ${product.stock > 0 ? "text-emerald-600" : "text-rose-600"}`}>
+                        {product.stock > 0 ? `${product.stock} left` : "Out of stock"}
                       </span>
                     </div>
+
                     <button 
                       onClick={() => handleAddToCart(product)}
                       disabled={product.stock <= 0}
-                      className="p-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-all hover:shadow-lg disabled:bg-gray-300 disabled:cursor-not-allowed active:scale-95"
-                      title="Add to Cart"
+                      className="w-full py-2.5 bg-indigo-600 text-white rounded-lg font-bold text-xs hover:bg-indigo-700 transition-all shadow-md hover:shadow-lg disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed active:scale-95 flex items-center justify-center gap-2 uppercase tracking-wide"
                     >
-                      <ShoppingCart className="w-5 h-5" />
+                      <ShoppingCart className="w-4 h-4" />
+                      Add to Cart
                     </button>
                   </div>
                 </div>
