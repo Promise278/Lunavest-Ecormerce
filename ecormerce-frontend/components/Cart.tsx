@@ -77,7 +77,7 @@ function Cart() {
       </div>
 
       {/* Product Section */}
-      <div className="px-6 md:px-20">
+      <div className="px-4 md:px-20">
         <ProductCard />
       </div>
     </>

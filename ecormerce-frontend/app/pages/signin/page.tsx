@@ -39,7 +39,7 @@ function SignInPage() {
       localStorage.setItem('token', data.token)
       toast.success('Login successful!')
 
-      window.location.href = '/dashboard'
+      // window.location.href = '/'
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message)

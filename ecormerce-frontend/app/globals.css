@@ -24,3 +24,14 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Force your site to always use your colors, ignoring system dark mode */
+html {
+  color-scheme: light; 
+}
+
+/* Optional: if you want a background color to stay consistent */
+body {
+  background-color: white;
+  color: black;           
+}

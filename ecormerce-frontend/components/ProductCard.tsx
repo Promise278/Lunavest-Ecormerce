@@ -161,7 +161,7 @@ export default function ProductCard() {
 
   return (
     <div className="min-h-screen py-1">
-      <div className="md:ml-38 ml-2 mb-12">
+      <div className="md:ml-38 ml-0 mb-12">
         <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-10 text-center">
           Featured Products
         </h2>

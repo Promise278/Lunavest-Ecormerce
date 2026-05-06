@@ -61,7 +61,8 @@ export default function SignupPage() {
       if (!res.ok) throw new Error(data.message || "Registration failed");
 
       toast.success("User registered successfully!");
-      setFormData({ name: "", email: "", password: "", confirmPassword: "" }); // reset form
+      setFormData({ name: "", email: "", password: "", confirmPassword: "" });
+      window.location.href = '/pages/signin'
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);
