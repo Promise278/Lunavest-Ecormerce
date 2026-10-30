@@ -6,6 +6,25 @@ You do **not** need Postman to follow along — every example below is code you 
 
 ---
 
+## 0. Interactive docs (Swagger UI)
+
+The API also ships with generated Swagger docs:
+
+| What | URL |
+|---|---|
+| Interactive UI | `https://lunavest-ecormerce.onrender.com/api-docs` |
+| Raw OpenAPI spec (JSON) | `https://lunavest-ecormerce.onrender.com/api-docs.json` |
+
+When the backend is deployed, swap `localhost:5000` for the deployed host — for example
+`https://lunavest-ecormerce.onrender.com/api-docs`. Send that link to anyone who wants to
+explore the API; they can click **Authorize**, paste a JWT from `/auth/login` and use **Try it out**
+on every endpoint.
+
+The spec lives in `docs/openapi.js`. If you add or change an endpoint, update that file so the
+docs stay accurate.
+
+---
+
 ## 1. The big picture
 
 ```
