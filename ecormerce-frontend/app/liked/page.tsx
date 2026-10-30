@@ -15,6 +15,9 @@ interface Product {
   stock: number;
 }
 
+const API_BASE =
+  process.env.NEXT_PUBLIC_API_URL || "https://lunavest-ecormerce.onrender.com";
+
 export default function LikedPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -92,7 +95,7 @@ export default function LikedPage() {
               >
                 <div className="relative aspect-square overflow-hidden bg-gray-50">
                   <Image
-                    src={product.image.startsWith("http") ? product.image : `https://lunavest-ecormerce.onrender.com${product.image}`}
+                    src={product.image.startsWith("http") ? product.image : `${API_BASE}${product.image}`}
                     alt={product.name}
                     fill
                     sizes="(max-width: 768px) 100vw, 33vw"
@@ -113,7 +116,7 @@ export default function LikedPage() {
                   <div className="mt-auto">
                     <div className="flex flex-col mb-4">
                       <span className="text-lg font-bold text-gray-900">
-                        Rp {product.price.toLocaleString()}
+                        ₦{product.price.toLocaleString()}
                       </span>
                     </div>
 

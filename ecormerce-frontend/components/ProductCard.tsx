@@ -1,7 +1,8 @@
 "use client"
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Heart, Star, ShoppingCart, Loader2 } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { apiFetch, apiPost } from "@/lib/api";
 import { useCart } from "@/context/CartContext";
 import { toast } from "react-toastify";
@@ -13,30 +14,61 @@ interface Product {
   price: number;
   stock: number;
   status: string;
+  category: string;
   image: string;
 }
 
-export default function ProductCard() {
+type ProductCardProps = {
+  search?: string;
+  category?: string;
+};
+
+const PAGE_SIZE = 8;
+const API_BASE =
+  process.env.NEXT_PUBLIC_API_URL || "https://lunavest-ecormerce.onrender.com";
+
+export default function ProductCard({ search = "", category = "" }: ProductCardProps) {
   const [products, setProducts] = useState<Product[]>([]);
   const [liked, setLiked] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const { addToCart } = useCart();
 
   useEffect(() => {
-    fetchProducts();
+    fetchProducts(1, false);
     fetchLikedProducts();
-  }, []);
+    // fetchProducts is re-created on each render; only the filters should trigger a reload.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search, category]);
 
-  const fetchProducts = async () => {
+  const fetchProducts = async (pageToLoad: number, append: boolean) => {
+    if (append) setLoadingMore(true);
     try {
-      const response = await apiFetch<{ success: boolean; data: Product[] }>("/products/seeAllproducts");
+      const params = new URLSearchParams();
+      if (search) params.set("search", search);
+      if (category) params.set("category", category);
+      params.set("page", String(pageToLoad));
+      params.set("limit", String(PAGE_SIZE));
+
+      const response = await apiFetch<{
+        success: boolean;
+        data: Product[];
+        pagination?: { page: number; totalPages: number; hasMore: boolean };
+      }>(`/products/seeAllproducts?${params.toString()}`);
+
       if (response.success && response.data) {
-        setProducts(response.data);
+        const items = response.data;
+        setProducts((prev) => (append ? [...prev, ...items] : items));
+        setPage(pageToLoad);
+        setTotalPages(response.pagination?.totalPages ?? 1);
       }
     } catch (error) {
       console.error("Error fetching products:", error);
     } finally {
       setLoading(false);
+      setLoadingMore(false);
     }
   };
 
@@ -86,7 +118,20 @@ export default function ProductCard() {
   }
 
   if (products.length === 0) {
-    return <div className="text-center py-20 text-gray-500">No products found.</div>;
+    const hasFilters = Boolean(search || category);
+    return (
+      <div className="text-center py-20 text-gray-500">
+        <p>{hasFilters ? "No products match your search." : "No products found."}</p>
+        {hasFilters && (
+          <Link
+            href="/"
+            className="inline-block mt-4 px-6 py-2.5 bg-gray-900 text-white rounded-lg text-sm font-bold hover:bg-black transition-all"
+          >
+            Clear filters
+          </Link>
+        )}
+      </div>
+    );
   }
 
   return (
@@ -101,7 +146,7 @@ export default function ProductCard() {
             const isLiked = liked.includes(product.id);
             const imageUrl = product.image.startsWith("http") 
               ? product.image 
-              : `${"https://lunavest-ecormerce.onrender.com"}${product.image}`;
+              : `${API_BASE}${product.image}`;
 
             return (
               <div
@@ -119,14 +164,16 @@ export default function ProductCard() {
                     </span>
                   </div>
 
-                  <Image
-                    src={imageUrl}
-                    alt={product.name}
-                    fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    className="object-cover group-hover:scale-110 transition-transform duration-700"
-                    priority={false}
-                  />
+                  <Link href={`/products/${product.id}`} className="block absolute inset-0">
+                    <Image
+                      src={imageUrl}
+                      alt={product.name}
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      className="object-cover group-hover:scale-110 transition-transform duration-700"
+                      priority={false}
+                    />
+                  </Link>
                   
                   {/* Quick Action Overlay */}
                   <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -151,19 +198,21 @@ export default function ProductCard() {
 
                 {/* Product Info */}
                 <div className="p-4 flex flex-col flex-grow">
-                  <h3 className="text-sm font-medium text-gray-800 mb-1 line-clamp-2 group-hover:text-indigo-600 transition-colors h-10">
-                    {product.name}
-                  </h3>
+                  <Link href={`/products/${product.id}`}>
+                    <h3 className="text-sm font-medium text-gray-800 mb-1 line-clamp-2 group-hover:text-indigo-600 transition-colors h-10">
+                      {product.name}
+                    </h3>
+                  </Link>
 
                   <div className="mt-auto">
                     {/* Price */}
                     <div className="flex flex-col mb-2">
                       <span className="text-lg font-bold text-gray-900 leading-none">
-                        Rp {product.price.toLocaleString()}
+                        ₦{product.price.toLocaleString()}
                       </span>
                       <div className="flex items-center gap-2 mt-1">
                         <span className="text-xs text-gray-400 line-through">
-                          Rp {(product.price * 1.2).toLocaleString()}
+                          ₦{(product.price * 1.2).toLocaleString()}
                         </span>
                         <span className="text-[10px] font-bold text-orange-600 bg-orange-50 px-1 rounded">
                           -20%
@@ -200,6 +249,25 @@ export default function ProductCard() {
             );
           })}
         </div>
+
+        {page < totalPages && (
+          <div className="flex justify-center mt-12">
+            <button
+              onClick={() => fetchProducts(page + 1, true)}
+              disabled={loadingMore}
+              className="px-8 py-3 bg-white border border-gray-300 text-gray-800 rounded-xl font-bold text-sm hover:bg-gray-50 hover:border-gray-400 transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2"
+            >
+              {loadingMore ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Loading...
+                </>
+              ) : (
+                "Load more products"
+              )}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

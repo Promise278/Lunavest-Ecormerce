@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { apiFormData } from "@/lib/api";
 import { toast } from "react-toastify";
-import { Upload, Package, DollarSign, List, FileText, ShieldAlert } from "lucide-react";
+import { Upload, Package, Banknote, List, FileText, ShieldAlert } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function StockPage() {
@@ -15,6 +15,7 @@ export default function StockPage() {
     price: "",
     stock: "",
     status: "available",
+    category: "Fashion",
   });
   const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -73,13 +74,14 @@ export default function StockPage() {
       data.append("price", formData.price);
       data.append("stock", formData.stock);
       data.append("status", formData.status);
+      data.append("category", formData.category);
       data.append("image", image);
 
       await apiFormData("/products/generate_products", data);
       toast.success("Product added successfully!");
       
       // Reset form
-      setFormData({ name: "", description: "", price: "", stock: "", status: "available" });
+      setFormData({ name: "", description: "", price: "", stock: "", status: "available", category: "Fashion" });
       setImage(null);
       setPreview(null);
     } catch (error: unknown) {
@@ -124,8 +126,8 @@ export default function StockPage() {
               {/* Price */}
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                  <DollarSign className="w-4 h-4 text-gray-500" />
-                  Price (Rp)
+                  <Banknote className="w-4 h-4 text-gray-500" />
+                  Price (₦)
                 </label>
                 <input
                   type="number"
@@ -170,6 +172,25 @@ export default function StockPage() {
                   <option value="available">Available</option>
                   <option value="inactive">Inactive</option>
                   <option value="out-of-stock">Out of Stock</option>
+                </select>
+              </div>
+
+              {/* Category */}
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                  <List className="w-4 h-4 text-gray-500" />
+                  Category
+                </label>
+                <select
+                  name="category"
+                  value={formData.category}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all outline-none appearance-none bg-white text-gray-900"
+                >
+                  <option value="Fashion">Fashion</option>
+                  <option value="Electronics">Electronics</option>
+                  <option value="Home">Home</option>
+                  <option value="Other">Other</option>
                 </select>
               </div>
             </div>

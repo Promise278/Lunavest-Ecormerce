@@ -34,6 +34,10 @@ module.exports = (sequelize, DataTypes) => {
     price: DataTypes.FLOAT,
     stock: DataTypes.INTEGER,
     status: DataTypes.ENUM("available", "inactive", "out-of-stock"),
+    category: {
+      type: DataTypes.STRING,
+      defaultValue: "Other",
+    },
     image: DataTypes.STRING,
     UserId: DataTypes.UUID,
   }, {

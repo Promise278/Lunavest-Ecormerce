@@ -37,7 +37,7 @@
 import React from "react";
 import ProductCard from "./ProductCard";
 
-function Cart() {
+function Cart({ search = "", category = "" }: { search?: string; category?: string }) {
   return (
     <>
       {/* Top Section */}
@@ -78,7 +78,7 @@ function Cart() {
 
       {/* Product Section */}
       <div className="px-4 md:px-20">
-        <ProductCard />
+        <ProductCard search={search} category={category} />
       </div>
     </>
   );

@@ -1,18 +1,50 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Search, Heart, ShoppingCart, PackagePlus } from "lucide-react";
+import { Search, Heart, ShoppingCart, PackagePlus, Package, ShieldCheck, LogOut } from "lucide-react";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+
+const CATEGORIES = ["All Category", "Fashion", "Electronics", "Home", "Other"];
 
 export default function Navbar() {
   const [category, setCategory] = useState("All Category");
   const { totalItems } = useCart();
   const { user, logout } = useAuth();
   const router = useRouter();
+  const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const activeCategory = params.get("category");
+    const activeSearch = params.get("search");
+    if (activeCategory) setCategory(activeCategory);
+    if (activeSearch) setSearch(activeSearch);
+  }, []);
+
+  const goToProducts = (nextSearch: string, nextCategory: string) => {
+    const params = new URLSearchParams();
+    if (nextSearch.trim()) params.set("search", nextSearch.trim());
+    if (nextCategory !== "All Category") params.set("category", nextCategory);
+    const query = params.toString();
+    router.push(query ? `/?${query}` : "/");
+  };
+
+  const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    goToProducts(search, category);
+  };
+
+  const handleCategoryChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const nextCategory = event.target.value;
+    setCategory(nextCategory);
+    goToProducts(search, nextCategory);
+  };
 
   const handleLogout = () => {
+    const confirmed = window.confirm("Are you sure you want to log out?");
+    if (!confirmed) return;
     logout();
     router.push("/");
   };
@@ -45,34 +77,48 @@ export default function Navbar() {
       </Link>
 
       {/* Search Bar */}
-      <div className="md:flex hidden items-center border border-gray-200 rounded-xl w-[40%] overflow-hidden bg-gray-50 focus-within:ring-2 focus-within:ring-indigo-500 transition-all">
+      <form
+        onSubmit={handleSearch}
+        className="md:flex hidden items-center border border-gray-200 rounded-xl w-[40%] overflow-hidden bg-gray-50 focus-within:ring-2 focus-within:ring-indigo-500 transition-all"
+      >
         <select
           value={category}
-          onChange={(e) => setCategory(e.target.value)}
+          onChange={handleCategoryChange}
           className="px-4 py-2 bg-gray-100 text-gray-600 text-sm outline-none border-r border-gray-200 font-medium"
         >
-          <option>All Category</option>
-          <option>Electronics</option>
-          <option>Fashion</option>
-          <option>Home</option>
+          {CATEGORIES.map((option) => (
+            <option key={option}>{option}</option>
+          ))}
         </select>
 
         <div className="flex items-center w-full px-3">
           <Search className="w-4 h-4 text-gray-400" />
           <input
             type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
             placeholder="Search products..."
             className="w-full py-2 px-3 text-sm outline-none bg-transparent placeholder-gray-400"
           />
         </div>
-      </div>
+      </form>
 
       {/* Icons & Auth */}
       <div className="flex items-center gap-6">
         <div className="md:flex hidden items-center gap-6 text-gray-500">
-          <Link href="/stock" title="Stock Management" className="hover:text-indigo-600 transition-colors">
-            <PackagePlus className="w-6 h-6" />
+          <Link href="/orders" title="My Orders" className="hover:text-indigo-600 transition-colors">
+            <Package className="w-6 h-6" />
           </Link>
+          {user?.role === "admin" && (
+            <Link href="/admin" title="Admin Dashboard" className="hover:text-indigo-600 transition-colors">
+              <ShieldCheck className="w-6 h-6" />
+            </Link>
+          )}
+          {user?.role === "admin" && (
+            <Link href="/stock" title="Stock Management" className="hover:text-indigo-600 transition-colors">
+              <PackagePlus className="w-6 h-6" />
+            </Link>
+          )}
           <Link href="/liked" title="Wishlist" className="hover:text-rose-500 transition-colors">
             <Heart className="w-6 h-6" />
           </Link>
@@ -93,13 +139,24 @@ export default function Navbar() {
           <div className="flex items-center gap-3">
             <div className="md:flex hidden flex-col items-end">
               <span className="text-sm font-bold text-gray-900">{user.name}</span>
-              <button onClick={handleLogout} className="text-[10px] text-gray-400 hover:text-rose-500 font-bold uppercase tracking-wider">
-                Logout
-              </button>
+              <span
+                className={`text-[10px] font-bold uppercase tracking-wider ${
+                  user.role === "admin" ? "text-indigo-600" : "text-gray-400"
+                }`}
+              >
+                {user.role === "admin" ? "Admin" : "Customer"}
+              </span>
             </div>
             <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-bold">
               {user.name.charAt(0).toUpperCase()}
             </div>
+            <button
+              onClick={handleLogout}
+              title="Logout"
+              className="p-2 text-gray-400 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition-all"
+            >
+              <LogOut className="w-5 h-5" />
+            </button>
           </div>
         ) : (
           <div className="flex items-center gap-3">

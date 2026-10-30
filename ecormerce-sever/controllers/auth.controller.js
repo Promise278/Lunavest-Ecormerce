@@ -1,15 +1,19 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const sequelize = require("../config/connection");
-const { v4: uuidv4 } = require("uuid");
-const{ Users } = require("../models");
+const crypto = require("crypto");
+const { Users } = require("../models");
 require("dotenv").config();
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
+const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || "admin@lunavest.com")
+  .split(",")
+  .map((email) => email.trim().toLowerCase())
+  .filter(Boolean);
+
 async function register(req, res) {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
       return res.status(400).json({
@@ -26,10 +30,11 @@ async function register(req, res) {
       });
     }
 
-    const saltRounds = 10;
-    const hashedPassword = bcrypt.hashSync(password, saltRounds);
+    const normalizedEmail = email.trim().toLowerCase();
 
-    const existingUser = await Users.findOne({ where: { email } });
+    const existingUser = await Users.findOne({
+      where: { email: normalizedEmail },
+    });
     if (existingUser) {
       return res.status(400).json({
         success: false,
@@ -37,19 +42,26 @@ async function register(req, res) {
       });
     }
 
+    const hashedPassword = bcrypt.hashSync(password, 10);
+
     const newUser = {
-      id: uuidv4(),
-      name,
-      email,
+      id: crypto.randomUUID(),
+      name: name.trim(),
+      email: normalizedEmail,
       password: hashedPassword,
-      role: email === "promiseobi2007@gmail.com" ? "admin" : (role || "user"),
+      role: ADMIN_EMAILS.includes(normalizedEmail) ? "admin" : "user",
     };
 
     await Users.create(newUser);
 
     return res.status(201).json({
       success: true,
-      data: newUser,
+      data: {
+        id: newUser.id,
+        name: newUser.name,
+        email: newUser.email,
+        role: newUser.role,
+      },
       message: "User Registered successfully",
     });
   } catch (error) {
@@ -75,7 +87,7 @@ async function login(req, res) {
     }
 
     const user = await Users.findOne({
-      where: { email },
+      where: { email: email.trim().toLowerCase() },
       attributes: ["id", "name", "email", "password", "role"],
     });
     if (!user || !bcrypt.compareSync(password, user.password)) {
@@ -112,4 +124,31 @@ async function login(req, res) {
   }
 }
 
-module.exports = { register, login };
+async function getMe(req, res) {
+  try {
+    const user = await Users.findByPk(req.user.id, {
+      attributes: ["id", "name", "email", "role", "createdAt"],
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: user,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: error.message,
+    });
+  }
+}
+
+module.exports = { register, login, getMe };

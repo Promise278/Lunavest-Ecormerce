@@ -7,6 +7,9 @@ import { ShoppingBag, Trash2, CreditCard, ArrowRight, Package } from "lucide-rea
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
+const API_BASE =
+  process.env.NEXT_PUBLIC_API_URL || "https://lunavest-ecormerce.onrender.com";
+
 export default function CheckoutPage() {
   const { cart, totalItems, totalPrice, removeFromCart, clearCart } = useCart();
   const [loading, setLoading] = useState(false);
@@ -71,7 +74,7 @@ export default function CheckoutPage() {
                       src={
                         item.image.startsWith("http")
                           ? item.image
-                          : `https://lunavest-ecormerce.onrender.com${item.image}`
+                          : `${API_BASE}${item.image}`
                       }
                       alt={item.name}
                       fill
@@ -82,7 +85,7 @@ export default function CheckoutPage() {
                   <div className="grow">
                     <h3 className="text-lg font-bold text-gray-900">{item.name}</h3>
                     <p className="text-indigo-600 font-semibold mt-1">
-                      Rp{item.price.toLocaleString()} x {item.quantity}
+                      ₦{item.price.toLocaleString()} x {item.quantity}
                     </p>
                   </div>
                   <button
@@ -103,7 +106,7 @@ export default function CheckoutPage() {
                 <div className="space-y-4 mb-8">
                   <div className="flex justify-between text-gray-600">
                     <span>Subtotal ({totalItems} items)</span>
-                    <span>Rp{totalPrice.toLocaleString()}</span>
+                    <span>₦{totalPrice.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between text-gray-600">
                     <span>Shipping</span>
@@ -113,7 +116,7 @@ export default function CheckoutPage() {
                   <div className="flex justify-between items-center">
                     <span className="text-lg font-bold text-gray-900">Total</span>
                     <span className="text-2xl font-black text-indigo-600">
-                      Rp{totalPrice.toLocaleString()}
+                      ₦{totalPrice.toLocaleString()}
                     </span>
                   </div>
                 </div>
